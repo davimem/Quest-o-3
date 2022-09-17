@@ -90,36 +90,57 @@ void ImprimeMatriz(double **M, int m, int n)
 
 double **Transposta(double **M, int m, int n)
 {
+  double **Mt;
   int i,j;
-  double **S;
-
-  S=malloc(n*sizeof(double *));
-  for(i=0; i<n; i++) S[i]=malloc(m * sizeof(double));
+  Mt=(double **)malloc(m*sizeof(double *));
+  for(i=0; i<m; i++) Mt[i]=(double *)malloc(n * sizeof(double));
   
-  for(i=0; i<m; i++)
+  for(i=0; i<m;i++)
   {
     for(j=0; j<n;j++)    
     {
-      S[n][m]=M[m][n];
+      Mt[i][j]=M[j][i];
     }
   }
-  
-  return S;
+  return Mt;
 }
 
 int main()
 {
-  double **M, **N, **Mt, **Nt;
-  int m1, m2, n1, n2;
+  double **M, **N, **Mt, **Nt, **MN, **MNt, **NtMt;
+  int m1, m2, n1, n2,i;
   
   M = LeMatriz("m1.dat", &m1, &m2);
   N = LeMatriz("m2.dat", &n1, &n2);
+  printf("Matriz M:\n");
   ImprimeMatriz(M, m1, m2);
+  printf("Matriz N:\n");
   ImprimeMatriz(N, n1, n2);
 
-  Mt = Transposta(M, m1, m2);
-  ImprimeMatriz(Mt, m2, m1);
+  Mt=Transposta(M, m1, m2);
+  printf("Matriz Mt:\n");
+  ImprimeMatriz(Mt, m1, m2);
 
   Nt = Transposta(N, n1, n2);
+  printf("Matriz Nt:\n");
   ImprimeMatriz(Nt, n2, n1);
+
+  MN= MultiplicaMatriz(M, m1, m2, N, n1, n2);
+  printf("Matriz M*N:\n");
+  ImprimeMatriz(MN, m1, n2);
+  
+  MNt= Transposta(MN, m1, m2);
+  printf("Matriz (M*N)t:\n");
+  ImprimeMatriz(MNt, m1, n2);
+
+  NtMt= MultiplicaMatriz(Nt, n1, n2, Mt, m1, m2);
+  printf("Matriz Nt*Mt:\n");
+  ImprimeMatriz(NtMt, m1, n2);
+
+  i=ComparaMatriz(MNt, NtMt, m1, m2);
+  
+  if(i==0) printf("As matrizes sao iguais!\n");
+  else printf("As matrizes sao diferentes!\n");
+
+  return 0;
 }
